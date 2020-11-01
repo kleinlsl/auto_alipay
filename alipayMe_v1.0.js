@@ -1,5 +1,5 @@
 
-var morningTime = "07:18";//自己运动能量生成时间
+var morningTime = "07:22";//自己运动能量生成时间
 var startTime = "07:00";
 var endTime = "7:35";
 var screen_width = 1080;  //设置屏幕的宽度，像素值
