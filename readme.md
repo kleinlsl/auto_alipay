@@ -2,7 +2,7 @@
 * 在网上看了一些自动收能量的脚本
 * 写了一个脚本
 * 使用AutoJs运行
-	* AutoJS下载地址 :[here](https://github.com/SuperMonster002/Hello_Sockpuppet/raw/master/%5Bauto.js%5D%5B4.1.1_alpha2%5D%5Barm-v7%5D(b69a4e23).apk?raw=true)
+	* AutoJS下载地址 :[here](https://github.com/kleinlsl/auto_alipay/releases/download/auto_alipay_v1.0/Auto.js.apk)
 * 运行步骤如下：
 	* 1.解锁（点亮屏幕，切换到输入密码界面，输入密码）
 	* 2.打开支付宝
