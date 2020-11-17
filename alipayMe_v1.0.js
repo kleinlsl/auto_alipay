@@ -1,9 +1,15 @@
+/**
+ * findOthers()之后
+ * 返回主页面继续找能量
+ * @type {string}
+ */
 
-var morningTime = "07:22";//自己运动能量生成时间
+var morningTime = "07:23";//自己运动能量生成时间
 var startTime = "07:00";
-var endTime = "7:35";
+var endTime = "07:30";
 var screen_width = 1080;  //设置屏幕的宽度，像素值
 var screen_height = 2340; //设置屏幕的高度，像素值
+var t=1000;  // 等待时间
 
 sleep(2000);
 unlock();
@@ -27,32 +33,34 @@ mainEntrence();
 //程序主入口
 function mainEntrence(){
 
-    do{
+    let b;
+    do {
+        b = true;
         //尝试打开支付宝
-        if (!openAlipay()) {
-            toastLog("打开支付宝失败，退出程序");
-            exit();
+        if (b) {
+            toastLog("尝试打开支付宝，若失败退出程序");
+            b = openAlipay();
         }
         // 尝试进入自己的蚂蚁森林，若失败跳过
-        if(!enterMyMainPage()){
-            toastLog("尝试进入自己的蚂蚁森林，若失败退出程序");
-            exit();
+        if (b) {
+            toastLog("尝试进入蚂蚁森林，若失败退出程序");
+            b = enterMyMainPage();
         }
-        if(!collectEnergy("收取自己能量中")){
-            toastLog("如果不在蚂蚁森林，退出程序");
-            exit();
+        if (b) {
+            toastLog("尝试收取自己能量，若失败退出程序");
+            b = collectEnergy("收取自己能量中");
         }
         // 找能量
-        while(findOthers()){
+        while (b && findOthers()) {
             back();
             sleep(300);
         }
         // 执行返回 4 次
         whenComplete(4);
         // 睡眠 1 秒，等待下一次收集
-        sleep(1000);
-    }while(checkTime());
-    
+        sleep(t);
+        t = t + 1;
+    } while (checkTime());
     exit();
 }
 /*
@@ -60,11 +68,12 @@ function mainEntrence(){
 * return 是否有能量可收
 */
 function findOthers(){
-
+    toastLog("findothers");
     if(textEndsWith("种树").exists()){
-        // 到了自己能量时间
+        // 
         if(myEnergyTime()){
             collectEnergy("收取自己能量");
+            sleep(100);
         }
         // 点击按钮寻找能量，不同手机需要更改位置参数
         click(960,1570);
@@ -84,7 +93,7 @@ function unlock(){
         device.wakeUp();
         //由于MIUI的解锁有变速检测，因此要点开时间以进入密码界面
         sleep(1000);
-        swipe(500, 0, 500, 1900, 2000);
+        swipe(500, 1900, 500, 0, 2000);
         click(100,150); 
         //输入屏幕解锁密码，其他密码请自行修改
         sleep(2000);
@@ -98,7 +107,7 @@ function unlock(){
         sleep(500);
         
         click(840,1640);
-        sleep(500);    
+        sleep(500);
     }
 }
 
@@ -108,18 +117,19 @@ function unlock(){
  * return 是否收取成功
  */
 function collectEnergy(info) {
+    sleep(1000);
     // 判断是否在蚂蚁森林
     if(!textContains("最新动态").exists()){
         return false;
     }
     for(var row=screen_height*0.256;row<screen_height*0.376;row+=80){
         for(var col=screen_width*0.185;col<screen_width*0.815;col+=80){
-            sleep(100);
+            sleep(5);
             click(col,row);
         }
     }
     toastLog(info);
-    sleep(100);
+    //  sleep(100);
     return true;
 }
 
@@ -132,7 +142,7 @@ function enterMyMainPage(){
     var i=0;
     // 拉至顶端
     swipe(screen_width*0.5,screen_height*0.5,screen_width*0.5,screen_height*0.25,500);
-    sleep(500);
+    sleep(1000);
     swipe(screen_width*0.5,screen_height*0.25,screen_width*0.5,screen_height*0.5,500);
     
     while (!textEndsWith("蚂蚁森林").exists() && !descEndsWith("蚂蚁森林").exists() && i<=5){
@@ -142,26 +152,28 @@ function enterMyMainPage(){
     if(i>=5){
         toastLog("没有找到蚂蚁森林入口，尝试中");
         clickByTextDesc("全部",0);
-        sleep(2000);
+        sleep(1000);
         swipe(screen_width*0.5,screen_height*0.3,screen_width*0.5,screen_height*0.7,1000);
-        sleep(2000);
+        sleep(1000);
         swipe(screen_width*0.5,screen_height*0.3,screen_width*0.5,screen_height*0.7,1000);
-        sleep(2000);
+        sleep(1000);
     }
+    sleep(3000);
     clickByTextDesc("蚂蚁森林",0);
     
     //等待进入自己的主页,10次尝试
-    sleep(3000);
+    
     i=0;
     while (!textEndsWith("种树").exists() && !descEndsWith("种树").exists() && i<=10){
         sleep(1000);
         i++;
     }
-    toastLog("第"+i+"次尝试进入自己主页");
+    // toastLog("第"+i+"次尝试进入自己主页");
     if(i>=10){
         toastLog("进入自己能量主页失败");
         return false;
     }
+    toastLog("进入自己能量主页成功");
     return true;
 }
 /**
@@ -277,21 +289,21 @@ function myEnergyTime(){
 function openAlipay(){
     launchApp("支付宝");
     toastLog("等待支付宝启动");
-    // sleep(3000);
+   // sleep(3000);
     var i=0;
     
     while (!textEndsWith("扫一扫").exists() && !descEndsWith("扫一扫").exists() && i<=5){
-        sleep(2000);
+        sleep(1000);
         // 点击首页，防止进入后在其他菜单
         clickByTextDesc("首页",0);
         i++;
     }
-    toastLog("第"+i+"次尝试进入支付宝主页");
+    // toastLog("第"+i+"次尝试进入支付宝主页");
     if(i>=5){
-        toastLog("没有找到支付宝首页");
-        sleep(1000);
+        toastLog("支付宝打开成功");
+        sleep(100);
         return false;
     }
+    toastLog("支付宝打开失败");
     return true;
 }
-    
