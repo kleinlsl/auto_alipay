@@ -27,23 +27,24 @@ mainEntrence();
 //程序主入口
 function mainEntrence(){
 
-    do{
+    let b;
+    do {
         //尝试打开支付宝
-        if (!openAlipay()) {
-            toastLog("打开支付宝失败，退出程序");
-            exit();
+        b = true;
+        //尝试打开支付宝
+        if (b) {
+            b = openAlipay();
         }
         // 尝试进入自己的蚂蚁森林，若失败跳过
-        if(!enterMyMainPage()){
+        if (b) {
             toastLog("尝试进入自己的蚂蚁森林，若失败退出程序");
-            exit();
+            b = enterMyMainPage();
         }
-        if(!collectEnergy("收取自己能量中")){
-            toastLog("如果不在蚂蚁森林，退出程序");
-            exit();
+        if (b) {
+            b = collectEnergy("收取自己能量中");
         }
         // 找能量
-        while(findOthers()){
+        while (b&&findOthers()) {
             back();
             sleep(300);
         }
@@ -51,7 +52,7 @@ function mainEntrence(){
         whenComplete(4);
         // 睡眠 1 秒，等待下一次收集
         sleep(1000);
-    }while(checkTime());
+    } while (checkTime());
     
     exit();
 }
