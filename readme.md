@@ -14,3 +14,17 @@
 	*	[https://github.com/congwulong/alipay_autojs](https://github.com/congwulong/alipay_autojs) 
 
 * 源码： [src](/alipayMe_v1.0.js)
+
+---
+
+问题：
+
+> 1、定时任务失败：
+>
+> * 开启后台弹出界面权限
+> 
+> * 查看auto.js 的应用行为记录
+> 
+> * 查找被拒绝的请求
+> 
+> * 将被拒绝项更改为始终允许
