@@ -2,14 +2,14 @@
  * 轮回找能量，指导没有能量
  * @type {string}
  */
-var morningTime = "07:28";//自己运动能量生成时间
+var morningTime = "07:24";//自己运动能量生成时间
 var startTime = "07:00";
-var endTime = "07:30";
+var endTime = "07:40";
 var screen_width = 1080;  //设置屏幕的宽度，像素值
 var screen_height = 2340; //设置屏幕的高度，像素值
 var t=1000;  // 等待时间
 
-sleep(2000);
+sleep(1000);
 unlock();
 sleep(1000);
 
@@ -45,12 +45,12 @@ function mainEntrence(){
             b = enterMyMainPage();
         }
         if (b) {
-            //toastLog("尝试收取自己能量，若失败退出程序");
-            //b = collectEnergy("收取自己能量中");
+			//toastLog("尝试收取自己能量，若失败退出程序");
+            sleep(2000);
         }
         // 找能量
         while (b && findOthers()) {
-            sleep(1000);
+            //sleep(500);
             if (myEnergyTime()) {
                 if (!textEndsWith("种树").exists()) {
                     back();
@@ -63,7 +63,7 @@ function mainEntrence(){
         whenComplete(4);
         // 睡眠 1 秒，等待下一次收集
         sleep(t);
-        t = t + 1;
+        t = t + 10;
     } while (checkTime());
     exit();
 }
@@ -72,14 +72,15 @@ function mainEntrence(){
 * return 是否有能量可收
 */
 function findOthers(){
-    // toastLog("findothers");
-    if(textEndsWith("最新动态").exists()){
+    sleep(1000);
+    if(textEndsWith("动态").exists()){
         //点击关闭障碍物，在自己主页不点击
         if(!textEndsWith("种树").exists())
         {
             click(530,1911);
+            click(529,1766);
         }
-        sleep(500);
+        sleep(100);
         // 点击按钮寻找能量，不同手机需要更改位置参数
         click(960,1570);
         return collectEnergy("收其他人能量中");
@@ -121,19 +122,29 @@ function unlock(){
  * return 是否收取成功
  */
 function collectEnergy(info) {
-    sleep(1700);
+   // sleep(4000);
+    var i=0;
     // 判断是否在蚂蚁森林
-    if(!textContains("最新动态").exists()){
+    while(!textContains("动态").exists() && i<30){
+        sleep(500);
+        i++;
+    }
+    if(i==30){
+        toastLog("尝试30次，不在蚂蚁森林");
         return false;
     }
-    for(var row=screen_height*0.256;row<screen_height*0.376;row+=80){
-        for(var col=screen_width*0.185;col<screen_width*0.815;col+=80){
-            sleep(5);
-            click(col,row);
-        }
+    sleep(3000);
+    var row=screen_height*0.265;
+    var col=screen_width*0.5;
+    var d=0;
+    while(row<screen_height*0.376){
+        sleep(20);
+        click(col+d,row);
+        click(col-d,row);
+        d+=80;
+        row+=40;
     }
     toastLog(info);
-    //  sleep(100);
     return true;
 }
 
@@ -145,35 +156,36 @@ function enterMyMainPage(){
     //五次尝试蚂蚁森林入
     var i=0;
     // 拉至顶端
-    swipe(screen_width*0.5,screen_height*0.5,screen_width*0.5,screen_height*0.25,500);
+    //swipe(screen_width*0.5,screen_height*0.5,screen_width*0.5,screen_height*0.25,500);
     sleep(500);
     swipe(screen_width*0.5,screen_height*0.25,screen_width*0.5,screen_height*0.5,500);
 
-    while (!textEndsWith("蚂蚁森林").exists() && !descEndsWith("蚂蚁森林").exists() && i<=10){
-        sleep(500);
+    while (!textEndsWith("蚂蚁森林").exists() && !descEndsWith("蚂蚁森林").exists() && i<=100){
+        sleep(50);
         i++;
     }
-    if(i>=5){
+    if(i>100){
         toastLog("没有找到蚂蚁森林入口，尝试中");
         clickByTextDesc("全部",0);
         sleep(1000);
         swipe(screen_width*0.5,screen_height*0.3,screen_width*0.5,screen_height*0.7,1000);
         sleep(1000);
-        swipe(screen_width*0.5,screen_height*0.3,screen_width*0.5,screen_height*0.7,1000);
-        sleep(1000);
+       // swipe(screen_width*0.5,screen_height*0.3,screen_width*0.5,screen_height*0.7,1000);
+       // sleep(1000);
     }
+    //sleep(500);
     clickByTextDesc("蚂蚁森林",0);
 
-    //等待进入自己的主页,10次尝试
-    sleep(3000);
+    //等待进入自己的主页,30次尝试
+    //sleep(500);
     i=0;
-    while (!textEndsWith("种树").exists() && !descEndsWith("种树").exists() && i<=10){
-        sleep(1000);
-        toastLog("第"+i+"次尝试进入自己主页");
+    while (!textEndsWith("种树").exists() && !descEndsWith("种树").exists() && i<=300){
+        sleep(50);
+        //toastLog("第"+i+"次尝试进入自己主页");
         i++;
     }
-    if(i>=10){
-        toastLog("进入自己能量主页失败");
+    if(i>300){
+        toastLog("30次，进入自己能量主页失败");
         return false;
     }
     return true;
@@ -309,3 +321,5 @@ function openAlipay(){
     }
     return true;
 }
+//}/}}
+//}/}/}/}
