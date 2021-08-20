@@ -8,6 +8,7 @@ var endTime = "07:40";
 var screen_width = 1080;  //设置屏幕的宽度，像素值
 var screen_height = 2340; //设置屏幕的高度，像素值
 var t = 1000;  // 等待时间
+var baseSleep = 50;  // 等待时间
 
 sleep(1000);
 unlock();
@@ -30,22 +31,19 @@ mainEntrence();
 
 //程序主入口
 function mainEntrence() {
-
     let b;
     do {
         b = true;
         //尝试打开支付宝
         if (b) {
-            //toastLog("尝试打开支付宝，若失败退出程序");
             b = openAlipay();
         }
         // 尝试进入自己的蚂蚁森林，若失败跳过
         if (b) {
-            //toastLog("尝试进入蚂蚁森林，若失败退出程序");
             b = enterMyMainPage();
         }
+        // 尝试收取自己能量
         if (b) {
-            //toastLog("尝试收取自己能量，若失败退出程序");
             sleep(2000);
         }
         // 找能量
@@ -73,8 +71,9 @@ function mainEntrence() {
 * return 是否有能量可收
 */
 function findOthers() {
-    sleep(1000);
-    if (textEndsWith("动态").exists()) {
+    // sleep(1000);
+    let exist = cycleJudgment("动态", 20);
+    if (exist) {
         //点击关闭障碍物，在自己主页不点击
         if (!textEndsWith("种树").exists()) {
             click(530, 1911);
@@ -122,13 +121,8 @@ function unlock() {
  * return 是否收取成功
  */
 function collectEnergy(info) {
-    var i = 0;
     // 判断是否在蚂蚁森林
-    while (!textContains("动态").exists() && i < 30) {
-        sleep(500);
-        i++;
-    }
-    if (i === 30) {
+    if (!cycleJudgment("动态", 300)) {
         toastLog("尝试30次，不在蚂蚁森林");
         return false;
     }
@@ -152,17 +146,12 @@ function collectEnergy(info) {
  * @returns {boolean} 是否进入成功
  */
 function enterMyMainPage() {
-    //五次尝试蚂蚁森林入
-    var i = 0;
     // 拉至顶端
     sleep(500);
     swipe(screen_width * 0.5, screen_height * 0.25, screen_width * 0.5, screen_height * 0.5, 500);
 
-    while (!textEndsWith("蚂蚁森林").exists() && !descEndsWith("蚂蚁森林").exists() && i <= 100) {
-        sleep(50);
-        i++;
-    }
-    if (i > 100) {
+    let exist = cycleJudgment("蚂蚁森林", 100);
+    if (!exist) {
         toastLog("没有找到蚂蚁森林入口，尝试中");
         clickByTextDesc("全部", 0);
         sleep(1000);
@@ -170,15 +159,25 @@ function enterMyMainPage() {
         sleep(1000);
     }
     clickByTextDesc("蚂蚁森林", 0);
-
     //等待进入自己的主页,30次尝试
-    i = 0;
-    while (!textEndsWith("种树").exists() && !descEndsWith("种树").exists() && i <= 300) {
-        sleep(50);
+    return cycleJudgment("种树", 30);
+}
+
+/**
+ * 循环number次，每次50ms，判断condition是否存在
+ *
+ * @param condition
+ * @param number
+ * @returns {boolean}
+ */
+function cycleJudgment(condition, number) {
+    let i = 0;
+    while (!textEndsWith(condition).exists() && !descEndsWith(condition).exists() && i <= number) {
+        sleep(baseSleep);
         i++;
     }
-    if (i > 300) {
-        toastLog("30次，进入自己能量主页失败");
+    if (i > number) {
+        toastLog(number + "次，未找到：" + condition);
         return false;
     }
     return true;
@@ -186,6 +185,7 @@ function enterMyMainPage() {
 
 /**
  * 自定义的点击函数
+ *
  * @param {*} energyType
  * @param {*} paddingY
  */
