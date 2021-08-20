@@ -72,7 +72,7 @@ function mainEntrence() {
 */
 function findOthers() {
     // sleep(1000);
-    let exist = cycleJudgment("动态", 20);
+    let exist = cycleJudgment("找能量", 20);
     if (exist) {
         //点击关闭障碍物，在自己主页不点击
         if (!textEndsWith("种树").exists()) {
@@ -122,7 +122,7 @@ function unlock() {
  */
 function collectEnergy(info) {
     // 判断是否在蚂蚁森林
-    if (!cycleJudgment("动态", 300)) {
+    if (!cycleJudgment("找能量", 300)) {
         toastLog("尝试30次，不在蚂蚁森林");
         return false;
     }
@@ -191,52 +191,41 @@ function cycleJudgment(condition, number) {
  */
 function clickByTextDesc(energyType, paddingY) {
     var clicked = false;
+    let endsWith = null;
     if (descEndsWith(energyType).exists()) {
-        descEndsWith(energyType).find().forEach(function (pos) {
-            var posb = pos.bounds();
-            if (posb.centerX() < 0 || posb.centerY() - paddingY < 0) {
-                return false;
-            }
-            //toastLog(pos.id());
-            var str = pos.id();
-            if (str != null) {
-                if (str.search("search") === -1) {
-                    click(posb.centerX(), posb.centerY() - paddingY);
-                    //toastLog("get it 1");
-                    clicked = true;
-                }
-            } else {
-                click(posb.centerX(), posb.centerY() - paddingY);
-                //toastLog("get it 2");
-                clicked = true;
-            }
-            sleep(100);
-        });
+        endsWith = descEndsWith(energyType).find();
+        toastLog("descEndsWith");
     }
-
     if (textEndsWith(energyType).exists() && clicked === false) {
-        textEndsWith(energyType).find().forEach(function (pos) {
-            var posb = pos.bounds();
-            if (posb.centerX() < 0 || posb.centerY() - paddingY < 0) {
-                return false;
-            }
-            //toastLog(pos.id());
-            var str = pos.id();
-            if (str != null) {
-                if (str.search("search") === -1) {
-                    click(posb.centerX(), posb.centerY() - paddingY);
-                    //toastLog("get it 3");
-                    clicked = true;
-                }
-            } else {
-                click(posb.centerX(), posb.centerY() - paddingY);
-                //toastLog("get it 4");
-                clicked = true;
-            }
-            sleep(100);
-        });
+        endsWith = textEndsWith(energyType).find();
+        toastLog("textEndsWith");
     }
+    if (endsWith != null) {
+        endsWith.forEach(
+            function (pos) {
+                toastLog(pos);
+                var posb = pos.bounds();
+                toastLog("1. " + posb);
+                toastLog("2. " + posb.centerX());
+                toastLog("3. " + posb.centerY());
+                if (posb.centerX() < 0 || posb.centerY() - paddingY < 0) {
+                    return false;
+                }
 
+                toastLog(pos.id());
+                var str = pos.id();
+                if (str != null) {
+                    toastLog(str.search("search"));
+                    if (str.search("search") === -1) {
+                        click(posb.centerX(), posb.centerY() - paddingY);
+                        toastLog("4. " + posb.centerX()+" ,"+ (posb.centerY() - paddingY));
+                        clicked = true;
+                    }
+                }
+                sleep(100);
+            }
+        );
+    }
     return clicked;
 }
 
