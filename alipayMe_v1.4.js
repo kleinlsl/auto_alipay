@@ -298,19 +298,16 @@ function myEnergyTime() {
 function openAlipay() {
     launchApp("支付宝");
     toastLog("等待支付宝启动");
-    // sleep(3000);
     var i = 0;
     while (!textEndsWith("扫一扫").exists() && !descEndsWith("扫一扫").exists() && i <= 5) {
         sleep(500);
         // 点击首页，防止进入后在其他菜单
         clickByTextDesc("首页", 0);
-        toastLog("第" + i + "次尝试进入支付宝主页");
         i++;
     }
-
+    toastLog("第" + i + "次尝试进入支付宝主页");
     if (i >= 5) {
         toastLog("没有找到支付宝首页");
-        //sleep(100);
         return false;
     }
     return true;
