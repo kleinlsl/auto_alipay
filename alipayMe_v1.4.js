@@ -160,7 +160,7 @@ function enterMyMainPage() {
     }
     clickByTextDesc("蚂蚁森林", 0);
     //等待进入自己的主页,30次尝试
-    return cycleJudgment("种树", 30);
+    return cycleJudgment("种树", 300);
 }
 
 /**
