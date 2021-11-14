@@ -60,9 +60,9 @@ function clickByTextDesc(energyType, paddingY) {
             function (pos) {
                 toastLog(pos);
                 var posb = pos.bounds();
-                toastLog("1. " + posb);
-                toastLog("2. " + posb.centerX());
-                toastLog("3. " + posb.centerY());
+                // toastLog("1. " + posb);
+                // toastLog("2. " + posb.centerX());
+                // toastLog("3. " + posb.centerY());
                 if (posb.centerX() < 0 || posb.centerY() - paddingY < 0) {
                     return false;
                 }
@@ -70,12 +70,16 @@ function clickByTextDesc(energyType, paddingY) {
                 toastLog(pos.id());
                 var str = pos.id();
                 if (str != null) {
-                    toastLog(str.search("search"));
+                    // toastLog(str.search("search"));
                     if (str.search("search") === -1) {
                         click(posb.centerX(), posb.centerY() - paddingY);
-                        toastLog("4. " + posb.centerX()+" ,"+ (posb.centerY() - paddingY));
+                        // toastLog("4. " + posb.centerX()+" ,"+ (posb.centerY() - paddingY));
                         clicked = true;
                     }
+                } else {
+                    click(posb.centerX(), posb.centerY() - paddingY);
+                    //toastLog("get it 4");
+                    clicked = true;
                 }
                 sleep(100);
             }

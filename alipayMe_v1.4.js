@@ -6,9 +6,17 @@ var morningTime = "07:24";//自己运动能量生成时间
 var startTime = "07:00";
 var endTime = "07:40";
 var screen_width = 1080;  //设置屏幕的宽度，像素值
-var screen_height = 2340; //设置屏幕的高度，像素值
+var screen_height = 2400; //设置屏幕的高度，像素值
 var t = 1000;  // 等待时间
 var baseSleep = 50;  // 等待时间
+// 障碍物坐标
+var barrier = [
+    [553, 1921], [556, 1942]
+];
+// 找能量按钮坐标
+var findEnergyIndx = [960, 1570];
+var maYiTreeText = "动态";
+
 
 sleep(1000);
 unlock();
@@ -72,16 +80,17 @@ function mainEntrence() {
 */
 function findOthers() {
     // sleep(1000);
-    let exist = cycleJudgment("找能量", 20);
+    let exist = cycleJudgment(maYiTreeText, 20);
     if (exist) {
         //点击关闭障碍物，在自己主页不点击
         if (!textEndsWith("种树").exists()) {
-            click(530, 1911);
-            click(529, 1766);
+            for (var i = 0; i < barrier.length; i++) {
+                click(barrier[i][0], barrier[i][1]);
+            }
         }
         sleep(100);
         // 点击按钮寻找能量，不同手机需要更改位置参数
-        click(960, 1570);
+        click(findEnergyIndx[0], findEnergyIndx[1]);
         return collectEnergy("收其他人能量中");
     }
     toastLog("没有能量了");
@@ -122,7 +131,7 @@ function unlock() {
  */
 function collectEnergy(info) {
     // 判断是否在蚂蚁森林
-    if (!cycleJudgment("找能量", 300)) {
+    if (!cycleJudgment(maYiTreeText, 300)) {
         toastLog("尝试30次，不在蚂蚁森林");
         return false;
     }
